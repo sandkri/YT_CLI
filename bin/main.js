@@ -143,7 +143,7 @@ async function main() {
     }
 
     if (action === "credits") {
-        console.log(chalk.cyan("🎵 YouTube Audio Downloader by Your Name"));
+        console.log(chalk.cyan("🎵 YouTube Audio Downloader by Xynterical"));
         console.log(chalk.cyan("🛠 Uses yt-dlp and FFmpeg"));
         console.log(chalk.cyan("✨ Open-source and free!"));
         return main(); // Restart the main menu
