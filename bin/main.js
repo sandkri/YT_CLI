@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const { execSync, spawn } = require("child_process");
 const path = require("path");
 const fs = require("fs");
@@ -7,6 +9,27 @@ const chalk = require("chalk").default;
 const inquirer = require("inquirer").default;
 const ora = require("ora").default;
 const CONFIG_PATH = path.join(__dirname, "config.json");
+
+function runInstaller() {
+    const installerPath = path.join(__dirname, "installer.js"); 
+
+    if (!fs.existsSync(installerPath)) {
+        console.error(chalk.red(`❌ Installer not found at ${installerPath}!`));
+        process.exit(1);
+    }
+
+    try {
+        console.log(chalk.yellow("🔧 Running installer to check dependencies..."));
+        execSync(`node "${installerPath}"`, { stdio: "inherit" }); 
+        console.log(chalk.green("✅ Installer check complete!\n"));
+    } catch (error) {
+        console.error(chalk.red("❌ Installer failed! Please check for errors."));
+        process.exit(1);
+    }
+}
+
+
+runInstaller(); 
 
 function printBanner() {
     console.clear();
@@ -78,7 +101,7 @@ async function downloadAudio(url, format) {
 
     ytDlp.stderr.on("data", (data) => {
         const output = data.toString();
-        const progressMatch = output.match(/\[download\]\s+([\d.]+)%/); // [download] 100% of 5.00MiB at  1.00MiB/s ETA 00:00, broken for now.
+        const progressMatch = output.match(/\[download\]\s+([\d.]+)%/); 
 
         if (progressMatch) {
             const percent = progressMatch[1];
@@ -142,13 +165,6 @@ async function main() {
         return main(); // Restart the main menu
     }
 
-    if (action === "credits") {
-        console.log(chalk.cyan("🎵 YouTube Audio Downloader by Xynterical"));
-        console.log(chalk.cyan("🛠 Uses yt-dlp and FFmpeg"));
-        console.log(chalk.cyan("✨ Open-source and free!"));
-        return main(); // Restart the main menu
-    }
-
     // If user selects MP3 or WAV, proceed to download
     const { url } = await inquirer.prompt([
         {
@@ -161,6 +177,5 @@ async function main() {
 
     await downloadAudio(url, action);
 }
-
 
 main();
