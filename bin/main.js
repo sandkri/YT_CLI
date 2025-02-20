@@ -119,6 +119,37 @@ async function main() {
         process.exit(0);
     }
 
+    if (action === "setPath") {
+        const { newPath } = await inquirer.prompt([
+            {
+                type: "input",
+                name: "newPath",
+                message: "📂 Enter the new download path:",
+                validate: (input) => (fs.existsSync(input) ? true : "❌ Path does not exist! Please enter a valid path."),
+            },
+        ]);
+        const config = loadConfig();
+        config.downloadPath = newPath;
+        saveConfig(config);
+        console.log(chalk.green(`✅ Download path set to: ${newPath}`));
+        return main(); // Restart the main menu
+    }
+
+    if (action === "restorePath") {
+        const defaultPath = getDefaultDownloadsFolder();
+        saveConfig({ downloadPath: defaultPath });
+        console.log(chalk.green(`🔄 Download path restored to default: ${defaultPath}`));
+        return main(); // Restart the main menu
+    }
+
+    if (action === "credits") {
+        console.log(chalk.cyan("🎵 YouTube Audio Downloader by Your Name"));
+        console.log(chalk.cyan("🛠 Uses yt-dlp and FFmpeg"));
+        console.log(chalk.cyan("✨ Open-source and free!"));
+        return main(); // Restart the main menu
+    }
+
+    // If user selects MP3 or WAV, proceed to download
     const { url } = await inquirer.prompt([
         {
             type: "input",
@@ -130,5 +161,6 @@ async function main() {
 
     await downloadAudio(url, action);
 }
+
 
 main();
