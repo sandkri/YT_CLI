@@ -11,8 +11,8 @@ const CONFIG_PATH = path.join(__dirname, "config.json");
 function printBanner() {
     console.clear();
     console.log(chalk.cyan(figlet.textSync("XYN", { horizontalLayout: "fitted" })));
-    console.log(chalk.magenta.bold("🎵 YouTube Audio Downloader 🎵"));
-    console.log(chalk.yellow("------------------------------------------------"));
+    console.log(chalk.cyan("🎵 YouTube Audio Downloader 🎵"));
+    console.log(chalk.cyan("------------------------------------------------"));
 }
 
 function findFFmpeg() {
