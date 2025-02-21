@@ -10,6 +10,8 @@ const inquirer = require("inquirer").default;
 const ora = require("ora").default;
 const CONFIG_PATH = path.join(__dirname, "config.json");
 
+
+// Installer functions
 function runInstaller() {
     const installerPath = path.join(__dirname, "installer.js"); 
 
@@ -29,7 +31,6 @@ function runInstaller() {
 }
 
 
-runInstaller(); 
 
 function printBanner() {
     console.clear();
