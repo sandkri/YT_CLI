@@ -11,26 +11,6 @@ const ora = require("ora").default;
 const CONFIG_PATH = path.join(__dirname, "config.json");
 
 
-// Installer functions
-function runInstaller() {
-    const installerPath = path.join(__dirname, "installer.js"); 
-
-    if (!fs.existsSync(installerPath)) {
-        console.error(chalk.red(`❌ Installer not found at ${installerPath}!`));
-        process.exit(1);
-    }
-
-    try {
-        console.log(chalk.yellow("🔧 Running installer to check dependencies..."));
-        execSync(`node "${installerPath}"`, { stdio: "inherit" }); 
-        console.log(chalk.green("✅ Installer check complete!\n"));
-    } catch (error) {
-        console.error(chalk.red("❌ Installer failed! Please check for errors."));
-        process.exit(1);
-    }
-}
-
-
 
 function printBanner() {
     console.clear();
@@ -60,16 +40,26 @@ function getDefaultDownloadsFolder() {
 }
 
 function loadConfig() {
-    if (fs.existsSync(CONFIG_PATH)) {
-        try {
-            return JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
-        } catch (error) {
-            console.error(chalk.red("⚠️ Error loading config. Resetting to default."));
-            return { downloadPath: getDefaultDownloadsFolder() };
-        }
+    const defaultPath = getDefaultDownloadsFolder();
+    const defaultConfig = { downloadPath: defaultPath };
+
+    if (!fs.existsSync(CONFIG_PATH)) {
+        console.log(chalk.yellow("⚠️ No config found. Creating default config..."));
+        saveConfig(defaultConfig);
+        return defaultConfig;
     }
-    return { downloadPath: getDefaultDownloadsFolder() };
+
+    try {
+        const config = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
+        if (!config.downloadPath) throw new Error("Invalid config!");
+        return config;
+    } catch (error) {
+        console.error(chalk.red("⚠️ Error loading config. Resetting to default."));
+        saveConfig(defaultConfig);
+        return defaultConfig;
+    }
 }
+
 
 function saveConfig(config) {
     fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 4), "utf8");
