@@ -2,7 +2,8 @@
   "name": "ytbeat",
   "version": "1.0.0",
   "bin": {
-    "yt": "bin/main.js"
+    "audio": "bin/main.js",
+    "audio-c": "bin/cli-o.js"
   },
   "dependencies": {
     "chalk": "^5.4.1",
@@ -10,6 +11,7 @@
     "figlet": "^1.8.0",
     "inquirer": "^9.3.7",
     "inquirer-file-tree-selection-prompt": "^2.0.5",
+    "minimist": "^1.2.8",
     "ora": "^8.2.0"
   }
 }

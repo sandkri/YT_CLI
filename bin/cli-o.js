@@ -4,22 +4,12 @@ const { execSync, spawn } = require("child_process");
 const path = require("path");
 const fs = require("fs");
 const os = require("os");
-const figlet = require("figlet");
 const chalk = require("chalk").default;
-const inquirer = require("inquirer").default;
 const ora = require("ora").default;
+const args = require("minimist")(process.argv.slice(2));
 
 const CONFIG_PATH = path.join(__dirname, "config.json");
 
-// Print banner
-function printBanner() {
-    console.clear();
-    console.log(chalk.cyan(figlet.textSync("AUDIO", { horizontalLayout: "fitted" })));
-    console.log(chalk.cyan("AUDIO Downloader"));
-    console.log(chalk.cyan("-----------------------------"));
-}
-
-// Check for FFmpeg
 function findFFmpeg() {
     const cmd = os.platform() === "win32" ? "where ffmpeg" : "which ffmpeg";
     try {
@@ -30,7 +20,6 @@ function findFFmpeg() {
     process.exit(1);
 }
 
-// Check for spotdl
 function findSpotdl() {
     const cmd = os.platform() === "win32" ? "where spotdl" : "which spotdl";
     try {
@@ -40,12 +29,10 @@ function findSpotdl() {
     return null;
 }
 
-// Default path
 function getDefaultDownloadsFolder() {
     return path.join(os.homedir(), "Downloads");
 }
 
-// Config loader
 function loadConfig() {
     const defaultPath = getDefaultDownloadsFolder();
     const defaultConfig = { downloadPath: defaultPath };
@@ -62,12 +49,10 @@ function loadConfig() {
     }
 }
 
-// Config writer
 function saveConfig(config) {
     fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 4), "utf8");
 }
 
-// Audio downloader
 async function downloadAudio(url, format) {
     const config = loadConfig();
     const outputDir = config.downloadPath;
@@ -97,7 +82,7 @@ async function downloadAudio(url, format) {
     const ffmpegPath = findFFmpeg();
     const spinner = ora({ text: "⏳ Starting download...", spinner: "dots" }).start();
 
-    const args = [
+    const ytdlpArgs = [
         url,
         "-f", "bestaudio",
         "--extract-audio",
@@ -107,7 +92,7 @@ async function downloadAudio(url, format) {
         "-o", outputTemplate
     ];
 
-    const ytDlp = spawn("yt-dlp", args);
+    const ytDlp = spawn("yt-dlp", ytdlpArgs);
 
     ytDlp.stderr.on("data", (data) => {
         const output = data.toString();
@@ -121,60 +106,16 @@ async function downloadAudio(url, format) {
     });
 }
 
-// Main menu
-async function main() {
-    printBanner();
+async function run() {
+    const format = args.f || args.format;
+    const url = args.u || args.url;
 
-    const { action } = await inquirer.prompt([
-        {
-            type: "list",
-            name: "action",
-            message: "🎵 Select an option:",
-            choices: [
-                { name: "🎧 MP3", value: "mp3" },
-                { name: "🎼 WAV", value: "wav" },
-                { name: "📂 Change Path", value: "setPath" },
-                { name: "🔄 Restore Default", value: "restorePath" },
-                { name: "❌ Exit", value: "exit" },
-            ],
-        },
-    ]);
-
-    if (action === "exit") return console.log(chalk.yellow("👋 Goodbye!"));
-
-    if (action === "setPath") {
-        const { newPath } = await inquirer.prompt([
-            {
-                type: "input",
-                name: "newPath",
-                message: "📂 Enter new download path:",
-                validate: (input) => fs.existsSync(input) || "❌ Path not found.",
-            },
-        ]);
-        const config = loadConfig();
-        config.downloadPath = newPath;
-        saveConfig(config);
-        console.log(chalk.green(`✅ Path set to: ${newPath}`));
-        return main();
+    if (!format || !url) {
+        console.log("Usage: yt-c -f [mp3|wav] -u <url>");
+        process.exit(1);
     }
 
-    if (action === "restorePath") {
-        const defPath = getDefaultDownloadsFolder();
-        saveConfig({ downloadPath: defPath });
-        console.log(chalk.green(`🔄 Restored to default: ${defPath}`));
-        return main();
-    }
-
-    const { url } = await inquirer.prompt([
-        {
-            type: "input",
-            name: "url",
-            message: "📥 Enter URL (YouTube or Spotify):",
-            validate: (input) => input.startsWith("http") || "❌ Invalid URL.",
-        },
-    ]);
-
-    await downloadAudio(url, action);
+    await downloadAudio(url, format);
 }
 
-main();
+run();
