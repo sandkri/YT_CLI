@@ -8,108 +8,120 @@ const figlet = require("figlet");
 const chalk = require("chalk").default;
 const inquirer = require("inquirer").default;
 const ora = require("ora").default;
+
 const CONFIG_PATH = path.join(__dirname, "config.json");
 
-
-
+// Print banner
 function printBanner() {
     console.clear();
     console.log(chalk.cyan(figlet.textSync("XYN", { horizontalLayout: "fitted" })));
-    console.log(chalk.cyan("🎵 YouTube Audio Downloader 🎵"));
-    console.log(chalk.cyan("------------------------------------------------"));
+    console.log(chalk.cyan("🎵 Audio Downloader"));
+    console.log(chalk.cyan("-----------------------------"));
 }
 
+// Check for FFmpeg
 function findFFmpeg() {
-    const platform = os.platform();
-    let ffmpegPath = null;
-
+    const cmd = os.platform() === "win32" ? "where ffmpeg" : "which ffmpeg";
     try {
-        ffmpegPath = execSync(platform === "win32" ? "where ffmpeg" : "which ffmpeg")
-            .toString()
-            .trim()
-            .split("\n")[0];
+        const ffmpegPath = execSync(cmd).toString().trim().split("\n")[0];
         if (fs.existsSync(ffmpegPath)) return ffmpegPath;
     } catch {}
-
-    console.error(chalk.red.bold("❌ FFmpeg not found! Please install it or add it to your system PATH."));
+    console.error(chalk.red("❌ FFmpeg not found. Install it or add to PATH."));
     process.exit(1);
 }
 
+// Check for spotdl
+function findSpotdl() {
+    const cmd = os.platform() === "win32" ? "where spotdl" : "which spotdl";
+    try {
+        const spotdlPath = execSync(cmd).toString().trim().split("\n")[0];
+        if (fs.existsSync(spotdlPath)) return spotdlPath;
+    } catch {}
+    return null;
+}
+
+// Default path
 function getDefaultDownloadsFolder() {
     return path.join(os.homedir(), "Downloads");
 }
 
+// Config loader
 function loadConfig() {
     const defaultPath = getDefaultDownloadsFolder();
     const defaultConfig = { downloadPath: defaultPath };
-
     if (!fs.existsSync(CONFIG_PATH)) {
-        console.log(chalk.yellow("⚠️ No config found. Creating default config..."));
         saveConfig(defaultConfig);
         return defaultConfig;
     }
-
     try {
         const config = JSON.parse(fs.readFileSync(CONFIG_PATH, "utf8"));
-        if (!config.downloadPath) throw new Error("Invalid config!");
-        return config;
-    } catch (error) {
-        console.error(chalk.red("⚠️ Error loading config. Resetting to default."));
+        return config.downloadPath ? config : defaultConfig;
+    } catch {
         saveConfig(defaultConfig);
         return defaultConfig;
     }
 }
 
-
+// Config writer
 function saveConfig(config) {
     fs.writeFileSync(CONFIG_PATH, JSON.stringify(config, null, 4), "utf8");
 }
 
+// Audio downloader
 async function downloadAudio(url, format) {
     const config = loadConfig();
     const outputDir = config.downloadPath;
     if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
 
     const ext = format === "wav" ? "wav" : "mp3";
+
+    if (url.includes("spotify.com")) {
+        const spotdlPath = findSpotdl();
+        if (!spotdlPath) {
+            console.log(chalk.red("❌ spotdl not found. Install it with: pip install spotdl"));
+            process.exit(1);
+        }
+        const spinner = ora("🎵 Using spotdl to download Spotify track...").start();
+        const spot = spawn("spotdl", ["--output", outputDir, url]);
+
+        spot.stderr.on("data", (data) => spinner.text = data.toString());
+
+        spot.on("exit", (code) => {
+            spinner.stop();
+            console.log(code === 0 ? chalk.green("✅ Spotify download complete!") : chalk.red("❌ Spotify download failed."));
+        });
+        return;
+    }
+
     const outputTemplate = path.join(outputDir, "%(title)s.%(ext)s");
-
     const ffmpegPath = findFFmpeg();
-
-    console.log(chalk.green("🎶 Downloading in best audio quality..."));
-    console.log(chalk.blue(`📂 Saving to: ${outputDir}`));
-
     const spinner = ora({ text: "⏳ Starting download...", spinner: "dots" }).start();
 
-    const ytDlp = spawn("yt-dlp", [
+    const args = [
+        url,
         "-f", "bestaudio",
         "--extract-audio",
         "--audio-format", ext,
         "--audio-quality", "0",
         "--ffmpeg-location", path.dirname(ffmpegPath),
-        "-o", outputTemplate,
-        url
-    ]);
+        "-o", outputTemplate
+    ];
+
+    const ytDlp = spawn("yt-dlp", args);
 
     ytDlp.stderr.on("data", (data) => {
         const output = data.toString();
-        const progressMatch = output.match(/\[download\]\s+([\d.]+)%/); 
-
-        if (progressMatch) {
-            const percent = progressMatch[1];
-            spinner.text = `⏳ Downloading... ${chalk.cyan(`${percent}%`)}`;
-        }
+        const match = output.match(/\[download\]\s+([\d.]+)%/);
+        if (match) spinner.text = `⏳ Downloading... ${chalk.cyan(match[1] + "%")}`;
     });
 
     ytDlp.on("exit", (code) => {
         spinner.stop();
-        if (code === 0) {
-            console.log(chalk.green.bold("✅ Download complete! 🎉"));
-        } else {
-            console.log(chalk.red.bold("❌ Download failed!"));
-        }
+        console.log(code === 0 ? chalk.green("✅ Download complete!") : chalk.red("❌ Download failed!"));
     });
 }
 
+// Main menu
 async function main() {
     printBanner();
 
@@ -117,52 +129,48 @@ async function main() {
         {
             type: "list",
             name: "action",
-            message: "🎵 What do you want to do?",
+            message: "🎵 Select an option:",
             choices: [
-                { name: "🎧 Download as MP3", value: "mp3" },
-                { name: "🎼 Download as WAV", value: "wav" },
-                { name: "📂 Change Download Path", value: "setPath" },
-                { name: "🔄 Restore Default Path", value: "restorePath" },
+                { name: "🎧 MP3", value: "mp3" },
+                { name: "🎼 WAV", value: "wav" },
+                { name: "📂 Change Path", value: "setPath" },
+                { name: "🔄 Restore Default", value: "restorePath" },
                 { name: "❌ Exit", value: "exit" },
             ],
         },
     ]);
 
-    if (action === "exit") {
-        console.log(chalk.yellow("👋 Goodbye!"));
-        process.exit(0);
-    }
+    if (action === "exit") return console.log(chalk.yellow("👋 Goodbye!"));
 
     if (action === "setPath") {
         const { newPath } = await inquirer.prompt([
             {
                 type: "input",
                 name: "newPath",
-                message: "📂 Enter the new download path:",
-                validate: (input) => (fs.existsSync(input) ? true : "❌ Path does not exist! Please enter a valid path."),
+                message: "📂 Enter new download path:",
+                validate: (input) => fs.existsSync(input) || "❌ Path not found.",
             },
         ]);
         const config = loadConfig();
         config.downloadPath = newPath;
         saveConfig(config);
-        console.log(chalk.green(`✅ Download path set to: ${newPath}`));
-        return main(); // Restart the main menu
+        console.log(chalk.green(`✅ Path set to: ${newPath}`));
+        return main();
     }
 
     if (action === "restorePath") {
-        const defaultPath = getDefaultDownloadsFolder();
-        saveConfig({ downloadPath: defaultPath });
-        console.log(chalk.green(`🔄 Download path restored to default: ${defaultPath}`));
-        return main(); // Restart the main menu
+        const defPath = getDefaultDownloadsFolder();
+        saveConfig({ downloadPath: defPath });
+        console.log(chalk.green(`🔄 Restored to default: ${defPath}`));
+        return main();
     }
 
-    // If user selects MP3 or WAV, proceed to download
     const { url } = await inquirer.prompt([
         {
             type: "input",
             name: "url",
-            message: "📺 Enter YouTube URL:",
-            validate: (input) => input.startsWith("http") || "❌ Please enter a valid URL.",
+            message: "📥 Enter URL (YouTube or Spotify):",
+            validate: (input) => input.startsWith("http") || "❌ Invalid URL.",
         },
     ]);
 
