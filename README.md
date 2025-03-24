@@ -1,7 +1,4 @@
-# XYN Audio Downloader 
-
-# Easy to use automatic portfolio builder for every GitHub user!
-
+# Audio Downloader 
 ![maintainability](https://img.shields.io/codeclimate/maintainability/sandkri/YT_CLI)
 ![Test Deployment](https://img.shields.io/badge/deployment-passing-brightgreen)
 ![issues](https://img.shields.io/github/issues/sandkri/YT_CLI)
