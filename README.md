@@ -1,5 +1,4 @@
 # Audio Downloader 
-![maintainability](https://img.shields.io/codeclimate/maintainability/sandkri/YT_CLI)
 ![Test Deployment](https://img.shields.io/badge/deployment-passing-brightgreen)
 ![issues](https://img.shields.io/github/issues/sandkri/YT_CLI)
 ![Stars](https://img.shields.io/github/stars/sandkri/YT_CLI?style=social)
@@ -10,8 +9,12 @@
 ![Open in IDX](https://img.shields.io/badge/Open%20in-IDX-000?logo=google)
 
 ---
+# Support
+Join our Discord to get support.
 
-[View Demo](https://your-demo-link.com) · [Report Bug](https://github.com/yourusername/yourrepo/issues) · [Request Feature](https://github.com/yourusername/yourrepo/issues)
+[![Join our Discord](https://img.shields.io/discord/1245789041295884369?label=Discord&logo=discord&style=for-the-badge)](https://discord.gg/your-invite-code)
+
+---
 
 A Node.js CLI tool to download audio from **YouTube** and **Spotify** in MP3 or WAV format.  
 Includes support for `yt-dlp`, `ffmpeg`, and `spotdl`.
