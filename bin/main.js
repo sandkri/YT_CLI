@@ -104,6 +104,7 @@ async function downloadAudio(url, format) {
         "--audio-format", ext,
         "--audio-quality", "0",
         "--ffmpeg-location", path.dirname(ffmpegPath),
+        "--concurrent-fragments", Math.floor(os.cpus().length/2).toString(),
         "-o", outputTemplate
     ];
 
