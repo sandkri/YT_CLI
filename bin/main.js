@@ -69,6 +69,7 @@ function saveConfig(config) {
 
 // Audio downloader
 async function downloadAudio(url, format) {
+    await fetchMetadata(url);
     const config = loadConfig();
     const outputDir = config.downloadPath;
     if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir, { recursive: true });
@@ -120,6 +121,31 @@ async function downloadAudio(url, format) {
         spinner.stop();
         console.log(code === 0 ? chalk.green("✅ Download complete!") : chalk.red("❌ Download failed!"));
     });
+}
+
+
+// Meta data
+async function fetchMetadata(url) {
+    try {
+        const result = execSync(`yt-dlp --dump-json ${url}`, { encoding: "utf8" });
+        const info = JSON.parse(result);
+
+        console.log(chalk.blue("\n🎶 Track Info:"));
+        console.log(chalk.green(`• Title: ${info.title}`));
+        console.log(chalk.green(`• Artist: ${info.artist || info.uploader}`));
+        console.log(chalk.green(`• Duration: ${formatDuration(info.duration)}`));
+        console.log(chalk.green(`• Format: ${info.ext || 'unknown'}`));
+        console.log("");
+
+    } catch (err) {
+        console.log(chalk.red("❌ Failed to fetch metadata."));
+    }
+}
+
+function formatDuration(seconds) {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins}:${secs.toString().padStart(2, '0')}`;
 }
 
 // Main menu

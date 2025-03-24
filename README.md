@@ -1,5 +1,7 @@
 # XYN Audio Downloader 
 
+<iframe src="https://discord.com/widget?id=1245789041295884369&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+
 A Node.js CLI tool to download audio from **YouTube** and **Spotify** in MP3 or WAV format.  
 Includes support for `yt-dlp`, `ffmpeg`, and `spotdl`.
 
@@ -131,3 +133,4 @@ A `config.json` is stored in the tool's folder to remember your download path.
 > Use this tool **at your own risk** and ensure you comply with the applicable laws in your region.
 
 ---
+
