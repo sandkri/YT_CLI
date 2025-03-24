@@ -1,11 +1,11 @@
-# XYN Audio Downloader 🎵
+# XYN Audio Downloader 
 
 A Node.js CLI tool to download audio from **YouTube** and **Spotify** in MP3 or WAV format.  
 Includes support for `yt-dlp`, `ffmpeg`, and `spotdl`.
 
 ---
 
-## 🚀 Features
+## Features
 
 - Download **MP3** or **WAV** from YouTube
 - Download Spotify tracks via [`spotdl`](https://github.com/spotDL/spotify-downloader)
@@ -14,7 +14,7 @@ Includes support for `yt-dlp`, `ffmpeg`, and `spotdl`.
 
 ---
 
-## 🔧 Requirements
+## Requirements
 
 - Node.js v16+
 - Python 3.7+
@@ -53,7 +53,7 @@ xyn
 
 ---
 
-## 🎧 Installing FFmpeg
+## Installing FFmpeg
 
 ### On Windows:
 - Download from https://ffmpeg.org/download.html
@@ -71,7 +71,7 @@ sudo apt install ffmpeg
 
 ---
 
-## 🎵 Installing spotdl (Spotify Downloader)
+## Installing spotdl (Spotify Downloader)
 
 ```bash
 pip install spotdl
@@ -86,7 +86,7 @@ spotdl --version
 
 ---
 
-## ✅ Usage
+## Usage
 
 After running `xyn`, select:
 
@@ -100,13 +100,13 @@ Then paste a valid YouTube or Spotify URL when prompted.
 
 ---
 
-## 📁 Config
+## Config
 
 A `config.json` is stored in the tool's folder to remember your download path.
 
 ---
 
-## 📌 Notes
+## Notes
 
 - Spotify tracks are downloaded using `spotdl`, which searches and downloads from YouTube.
 - YouTube downloads use `yt-dlp` + `ffmpeg` directly.
@@ -114,10 +114,10 @@ A `config.json` is stored in the tool's folder to remember your download path.
 
 ---
 
-## 🔗 Credits
+## Credits
 
 - [`yt-dlp`](https://github.com/yt-dlp/yt-dlp)
 - [`ffmpeg`](https://ffmpeg.org/)
 - [`spotdl`](https://github.com/spotDL/spotify-downloader)
 - [`ora`](https://www.npmjs.com/package/ora), [`chalk`](https://www.npmjs.com/package/chalk), [`inquirer`](https://www.npmjs.com/package/inquirer)
-- [`Xynterical`](https://github.com/sandkri)
+- [`sandkri`](https://github.com/sandkri)
