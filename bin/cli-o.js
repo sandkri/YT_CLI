@@ -111,7 +111,7 @@ async function run() {
     const url = args.u || args.url;
 
     if (!format || !url) {
-        console.log("Usage: yt-c -f [mp3|wav] -u <url>");
+        console.log("Usage: audio-c -f [mp3|wav] -u <url>");
         process.exit(1);
     }
 
