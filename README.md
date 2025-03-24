@@ -1,6 +1,20 @@
 # XYN Audio Downloader 
 
-<iframe src="https://discord.com/widget?id=1245789041295884369&theme=dark" width="350" height="500" allowtransparency="true" frameborder="0" sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"></iframe>
+# Easy to use automatic portfolio builder for every GitHub user!
+
+![maintainability](https://img.shields.io/codeclimate/maintainability/sandkri/YT_CLI)
+![Test Deployment](https://img.shields.io/badge/deployment-passing-brightgreen)
+![issues](https://img.shields.io/github/issues/sandkri/YT_CLI)
+![Stars](https://img.shields.io/github/stars/sandkri/YT_CLI?style=social)
+![Forks](https://img.shields.io/github/forks/sandkri/YT_CLI?style=social)
+![Last Commit](https://img.shields.io/github/last-commit/sandkri/YT_CLI?color=yellow&label=last%20commit)
+![Contributions](https://img.shields.io/badge/contributions-welcome-brightgreen)
+![License](https://img.shields.io/github/license/sandkri/YT_CLI)
+![Open in IDX](https://img.shields.io/badge/Open%20in-IDX-000?logo=google)
+
+---
+
+[View Demo](https://your-demo-link.com) · [Report Bug](https://github.com/yourusername/yourrepo/issues) · [Request Feature](https://github.com/yourusername/yourrepo/issues)
 
 A Node.js CLI tool to download audio from **YouTube** and **Spotify** in MP3 or WAV format.  
 Includes support for `yt-dlp`, `ffmpeg`, and `spotdl`.
