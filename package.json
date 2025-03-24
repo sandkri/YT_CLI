@@ -1,5 +1,5 @@
 {
-  "name": "ytbeat",
+  "name": "audio",
   "version": "1.0.0",
   "bin": {
     "audio": "bin/main.js",
