@@ -24,7 +24,7 @@ Includes support for `yt-dlp`, `ffmpeg`, and `spotdl`.
 
 ---
 
-## 🛠 Installation
+## Installation
 
 ### 1. Clone this repo
 
