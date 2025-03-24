@@ -121,3 +121,13 @@ A `config.json` is stored in the tool's folder to remember your download path.
 - [`spotdl`](https://github.com/spotDL/spotify-downloader)
 - [`ora`](https://www.npmjs.com/package/ora), [`chalk`](https://www.npmjs.com/package/chalk), [`inquirer`](https://www.npmjs.com/package/inquirer)
 - [`sandkri`](https://github.com/sandkri)
+
+---
+
+### ⚠️ Disclaimer
+
+> This tool is provided for educational and personal use only.  
+> I am **not liable** for any misuse, illegal downloads, or violations of terms of service related to third-party platforms.  
+> Use this tool **at your own risk** and ensure you comply with the applicable laws in your region.
+
+---
